@@ -7,53 +7,100 @@
     body {
       margin: 0;
       min-height: 100vh;
-      background: radial-gradient(circle at top, #3b2235, #0d0d0f 60%);
+      background: radial-gradient(circle at top, #4a2840, #0d0d0f 65%);
       color: #f8f1f6;
       font-family: Georgia, serif;
       display: flex;
       justify-content: center;
       align-items: center;
+      padding: 24px;
     }
 
     .app {
       width: 90%;
-      max-width: 520px;
+      max-width: 560px;
       padding: 40px;
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 28px;
       text-align: center;
-      background: rgba(0,0,0,0.35);
+      background: rgba(0,0,0,0.38);
+      box-shadow: 0 0 45px rgba(242,198,222,0.12);
+      animation: fadeIn 1s ease;
     }
 
     h1 {
-      font-size: 36px;
+      font-size: 38px;
+      margin-bottom: 8px;
+      text-shadow: 0 0 18px rgba(242,198,222,0.25);
     }
 
     .subtitle {
       color: #d8b8cd;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
+      line-height: 1.5;
     }
 
-    select, button {
+    label {
+      display: block;
+      margin-top: 18px;
+      margin-bottom: 8px;
+      color: #f2c6de;
+    }
+
+    select, input, button {
       width: 100%;
       padding: 14px;
-      margin-top: 12px;
+      margin-top: 10px;
       border-radius: 999px;
       border: none;
       font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    select, input {
+      background: #1d141b;
+      color: #f8f1f6;
     }
 
     button {
       background: #f2c6de;
       color: #1a1017;
       cursor: pointer;
+      transition: 0.2s ease;
+      font-weight: bold;
+    }
+
+    button:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 18px rgba(242,198,222,0.35);
+    }
+
+    .secondary {
+      background: rgba(255,255,255,0.12);
+      color: #f8f1f6;
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+
+    .ko-fi {
+      display: block;
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 999px;
+      background: #f2c6de;
+      color: #1a1017;
+      text-decoration: none;
+      font-weight: bold;
     }
 
     .message {
-      margin-top: 20px;
-      padding: 20px;
-      border-radius: 16px;
-      background: rgba(255,255,255,0.08);
+      margin-top: 24px;
+      padding: 22px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.09);
+      line-height: 1.6;
+      font-size: 18px;
+      min-height: 70px;
+      animation: fadeIn 0.5s ease;
     }
 
     .saved-list {
@@ -61,11 +108,45 @@
       text-align: left;
     }
 
+    .saved-list h2 {
+      text-align: center;
+      color: #f2c6de;
+      font-size: 22px;
+    }
+
     .saved-item {
-      margin-top: 10px;
-      padding: 12px;
-      border-radius: 12px;
+      margin-top: 12px;
+      padding: 14px;
+      border-radius: 14px;
       background: rgba(255,255,255,0.08);
+      line-height: 1.5;
+    }
+
+    .small {
+      font-size: 13px;
+      color: #c9a9bd;
+      margin-top: 14px;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .app {
+        padding: 28px;
+      }
+
+      h1 {
+        font-size: 30px;
+      }
     }
   </style>
 </head>
@@ -76,6 +157,7 @@
   <h1>The Midnight Check-In</h1>
   <p class="subtitle">A soft place to land when your mind feels loud.</p>
 
+  <label for="mood">How are you feeling?</label>
   <select id="mood">
     <option value="sad">Sad</option>
     <option value="angry">Angry</option>
@@ -84,60 +166,157 @@
     <option value="hopeful">Hopeful</option>
   </select>
 
+  <label for="intensity">How intense is it?</label>
+  <input type="range" id="intensity" min="1" max="3" value="2">
+
   <button onclick="giveCheckIn()">Give me a check-in</button>
-  <button onclick="saveMessage()">Save this message</button>
+  <button class="secondary" onclick="saveMessage()">Save this message</button>
+  <button class="secondary" onclick="copyMessage()">Copy this message</button>
+
+  <a class="ko-fi" href="https://ko-fi.com/ashanthem#" target="_blank">
+    Get a deeper private check-in
+  </a>
 
   <div id="message" class="message">
     Choose a mood, then click the button.
   </div>
 
-  <div id="savedList" class="saved-list"></div>
+  <p class="small">Saved messages stay on this device.</p>
+
+  <div id="savedList" class="saved-list">
+    <h2>Saved Check-Ins</h2>
+  </div>
 </div>
 
 <script>
 const messages = {
-  sad: [
-    "You are not broken. You are grieving something that mattered.",
-    "Let yourself feel it without turning it into proof that you failed."
-  ],
-  angry: [
-    "Your anger is information. Listen to it before you let it drive.",
-    "You do not have to burn the whole room down to prove you were hurt."
-  ],
-  lost: [
-    "You are between versions of yourself.",
-    "The next step does not need to be perfect."
-  ],
-  anxious: [
-    "Not every thought is a prophecy.",
-    "Come back to this moment. Breathe."
-  ],
-  hopeful: [
-    "Let hope be quiet.",
-    "Something in you still believes."
-  ]
+  sad: {
+    1: [
+      "You are allowed to have a soft night. Nothing has to be solved all at once.",
+      "This feeling is visiting. It does not get to become your whole identity."
+    ],
+    2: [
+      "You are not broken. You are grieving something that mattered.",
+      "Let yourself feel it without turning it into proof that you failed."
+    ],
+    3: [
+      "Tonight, your only job is to survive the wave without becoming cruel to yourself.",
+      "The ache is loud, but it is not the final truth of your life."
+    ]
+  },
+
+  angry: {
+    1: [
+      "Your anger is information. Listen before reacting.",
+      "You can be upset without handing your peace to the fire."
+    ],
+    2: [
+      "Take one breath before the next sentence. Power does not need to rush.",
+      "You do not have to burn the whole room down to prove you were hurt."
+    ],
+    3: [
+      "Step back before the anger chooses your next move for you.",
+      "Your rage may be valid, but your future still deserves protection."
+    ]
+  },
+
+  lost: {
+    1: [
+      "You are not lost forever. You are just between directions.",
+      "Start with the smallest true thing you know."
+    ],
+    2: [
+      "You are between versions of yourself. That does not mean you are failing.",
+      "The next step does not need to be perfect. It only needs to be real."
+    ],
+    3: [
+      "When everything feels unclear, choose safety, water, rest, and one honest next step.",
+      "You do not need the whole map tonight. You need one lantern."
+    ]
+  },
+
+  anxious: {
+    1: [
+      "Come back to this room. Come back to this breath.",
+      "Not every thought is a prophecy."
+    ],
+    2: [
+      "Your body is trying to protect you, not punish you.",
+      "Name five things you can see. Let the room prove you are here."
+    ],
+    3: [
+      "Do not make permanent decisions from a temporary storm.",
+      "Your nervous system is screaming. Lower the volume before you trust the message."
+    ]
+  },
+
+  hopeful: {
+    1: [
+      "Let hope be quiet. It does not need to explain itself.",
+      "A softer future can begin with one small choice."
+    ],
+    2: [
+      "Something in you still believes. Trust that ember.",
+      "You are allowed to want more without apologizing for it."
+    ],
+    3: [
+      "This is not delusion. This is the part of you that refuses to stay buried.",
+      "Let the vision return. You are not done becoming."
+    ]
+  }
 };
 
 function giveCheckIn() {
   const mood = document.getElementById("mood").value;
-  const moodMessages = messages[mood];
+  const intensity = document.getElementById("intensity").value;
+  const moodMessages = messages[mood][intensity];
   const randomIndex = Math.floor(Math.random() * moodMessages.length);
+
   document.getElementById("message").textContent = moodMessages[randomIndex];
 }
 
 function saveMessage() {
   const currentMessage = document.getElementById("message").textContent;
 
-  if (currentMessage.includes("Choose")) return;
+  if (currentMessage.includes("Choose a mood")) {
+    alert("Get a check-in first, then save it.");
+    return;
+  }
 
-  const savedList = document.getElementById("savedList");
+  let savedMessages = JSON.parse(localStorage.getItem("savedMessages")) || [];
+  savedMessages.push(currentMessage);
+  localStorage.setItem("savedMessages", JSON.stringify(savedMessages));
 
-  const newItem = document.createElement("div");
-  newItem.className = "saved-item";
-  newItem.textContent = currentMessage;
-
-  savedList.appendChild(newItem);
+  showSavedMessages();
 }
+
+function showSavedMessages() {
+  const savedList = document.getElementById("savedList");
+  const savedMessages = JSON.parse(localStorage.getItem("savedMessages")) || [];
+
+  savedList.innerHTML = "<h2>Saved Check-Ins</h2>";
+
+  savedMessages.forEach(function(message) {
+    const newItem = document.createElement("div");
+    newItem.className = "saved-item";
+    newItem.textContent = message;
+    savedList.appendChild(newItem);
+  });
+}
+
+function copyMessage() {
+  const currentMessage = document.getElementById("message").textContent;
+
+  if (currentMessage.includes("Choose a mood")) {
+    alert("Get a check-in first, then copy it.");
+    return;
+  }
+
+  navigator.clipboard.writeText(currentMessage);
+  alert("Message copied.");
+}
+
+showSavedMessages();
 </script>
 
 </body>
