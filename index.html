@@ -1,39 +1,144 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Amanda Anneli</title>
+  <title>The Midnight Check-In</title>
+
   <style>
     body {
-      background-color: #0f0f0f;
-      color: #f5f5f5;
-      font-family: Arial, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #3b2235, #0d0d0f 60%);
+      color: #f8f1f6;
+      font-family: Georgia, serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .app {
+      width: 90%;
+      max-width: 520px;
+      padding: 40px;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 24px;
       text-align: center;
-      padding: 50px;
+      background: rgba(0,0,0,0.35);
     }
+
     h1 {
-      font-size: 40px;
-      margin-bottom: 10px;
+      font-size: 36px;
     }
-    p {
-      font-size: 18px;
-      color: #cfcfcf;
+
+    .subtitle {
+      color: #d8b8cd;
+      margin-bottom: 20px;
     }
-    .button {
+
+    select, button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 12px;
+      border-radius: 999px;
+      border: none;
+      font-size: 16px;
+    }
+
+    button {
+      background: #f2c6de;
+      color: #1a1017;
+      cursor: pointer;
+    }
+
+    .message {
       margin-top: 20px;
-      padding: 12px 24px;
-      background-color: #444;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
+      padding: 20px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .saved-list {
+      margin-top: 30px;
+      text-align: left;
+    }
+
+    .saved-item {
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.08);
     }
   </style>
 </head>
+
 <body>
 
-  <h1>Welcome to My World</h1>
-  <p>A space for clarity, connection, and emotional truth.</p>
+<div class="app">
+  <h1>The Midnight Check-In</h1>
+  <p class="subtitle">A soft place to land when your mind feels loud.</p>
 
-  <a class="button" href="#">Work With Me</a>
+  <select id="mood">
+    <option value="sad">Sad</option>
+    <option value="angry">Angry</option>
+    <option value="lost">Lost</option>
+    <option value="anxious">Anxious</option>
+    <option value="hopeful">Hopeful</option>
+  </select>
+
+  <button onclick="giveCheckIn()">Give me a check-in</button>
+  <button onclick="saveMessage()">Save this message</button>
+
+  <div id="message" class="message">
+    Choose a mood, then click the button.
+  </div>
+
+  <div id="savedList" class="saved-list"></div>
+</div>
+
+<script>
+const messages = {
+  sad: [
+    "You are not broken. You are grieving something that mattered.",
+    "Let yourself feel it without turning it into proof that you failed."
+  ],
+  angry: [
+    "Your anger is information. Listen to it before you let it drive.",
+    "You do not have to burn the whole room down to prove you were hurt."
+  ],
+  lost: [
+    "You are between versions of yourself.",
+    "The next step does not need to be perfect."
+  ],
+  anxious: [
+    "Not every thought is a prophecy.",
+    "Come back to this moment. Breathe."
+  ],
+  hopeful: [
+    "Let hope be quiet.",
+    "Something in you still believes."
+  ]
+};
+
+function giveCheckIn() {
+  const mood = document.getElementById("mood").value;
+  const moodMessages = messages[mood];
+  const randomIndex = Math.floor(Math.random() * moodMessages.length);
+  document.getElementById("message").textContent = moodMessages[randomIndex];
+}
+
+function saveMessage() {
+  const currentMessage = document.getElementById("message").textContent;
+
+  if (currentMessage.includes("Choose")) return;
+
+  const savedList = document.getElementById("savedList");
+
+  const newItem = document.createElement("div");
+  newItem.className = "saved-item";
+  newItem.textContent = currentMessage;
+
+  savedList.appendChild(newItem);
+}
+</script>
 
 </body>
 </html>
