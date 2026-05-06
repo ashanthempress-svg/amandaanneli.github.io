@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.venv/
+pinterest_mvp/output/*.json
+pinterest_mvp/output/*.csv
+pinterest_mvp/output/*.png
+!pinterest_mvp/output/.gitkeep
